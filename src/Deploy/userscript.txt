@@ -1,0 +1,13 @@
+#!/bin/bash
+sudo yum update -y
+sudo yum install -y git
+sudo yum install -y dotnet-sdk-8.0
+sudo yum install -y docker
+
+# once docker is installed, start it
+# sudo systemctl start docker
+
+# to ensure docker is running evry time the instance reboots
+# sudo systemctl enable docker
+
+# clone repo

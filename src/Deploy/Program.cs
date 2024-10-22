@@ -18,7 +18,8 @@ app.UseHttpsRedirection();
 
 List<Book> books = [
     new Book{Id = 1, Author = "George Martin", Title = "Game of Thrones"},
-    new Book{Id = 2, Author = "Chinua Achebe", Title = "Things fall apart"}
+    new Book{Id = 2, Author = "Chinua Achebe", Title = "Things fall apart"},
+    new Book{Id = 3, Author = "Bernard Shaw", Title = "Arms and the Man"}
     
     ];
 
