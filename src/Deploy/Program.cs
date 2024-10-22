@@ -24,9 +24,20 @@ List<Book> books = [
 
 app.MapGet("/api/books", () =>
 {
-    return books;
+    return Results.Ok(books);
 })
 .WithName("GetBooks")
+.WithOpenApi();
+
+app.MapGet("api/book/{id}", (int id) =>
+{
+    var book = books.FirstOrDefault(x => x.Id == id);
+
+    if (book is null) return Results.NotFound("Book not found");
+
+    return Results.Ok(book);
+
+}).WithName("GetBook")
 .WithOpenApi();
 
 app.Run();
