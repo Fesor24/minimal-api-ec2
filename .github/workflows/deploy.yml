@@ -11,19 +11,20 @@ jobs:
 
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        env:
+            PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            HOSTNAME: ${{secrets.HOST_DNS}}
+            USER_NAME: ${{secrets.USERNAME}}
 
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Add your EC2 SSH key to GitHub secrets
-
-      - name: SSH into EC2 and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_INSTANCE_PUBLIC_IP }} << 'EOF'
-            cd minimal-api-ec2  # Navigate to your app's directory
-            git pull origin main   # Pull the latest code
-            docker build -t books-api .  # Build the new Docker image
-            docker stop books-con || true  # Stop the old container if running
-            docker run -d --name books-con -p 8080:8080 <image_name>  # Run the new container
-          EOF
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME} '
+
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd minimal-api-ec2 &&
+              git pull origin main &&
+              docker build -t books-api . &&
+              docker stop books-con || true &&
+              docker run -d --name books-con -p 8080:8080 books-api
+              '
