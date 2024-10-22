@@ -17,8 +17,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 List<Book> books = [
-    new Book{Author = "George Martin", Title = "Game of Thrones"},
-    new Book{Author = "Chinua Achebe", Title = "Things fall apart"}
+    new Book{Id = 1, Author = "George Martin", Title = "Game of Thrones"},
+    new Book{Id = 2, Author = "Chinua Achebe", Title = "Things fall apart"}
     
     ];
 
@@ -33,6 +33,7 @@ app.Run();
 
 class Book
 {
+    public int Id { get; set; }
     public string Title { get; set; }
     public string Author { get; set; }
 }
