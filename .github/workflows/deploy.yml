@@ -26,5 +26,6 @@ jobs:
               git pull origin main &&
               sudo docker build -t books-api . &&
               sudo docker stop books-con || true &&
+              sudo docker rm books-con || true &&
               sudo docker run -d --name books-con -p 8080:8080 books-api
           '
