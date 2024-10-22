@@ -24,7 +24,7 @@ jobs:
               set -e
               cd minimal-api-ec2 &&
               git pull origin main &&
-              docker build -t books-api . &&
-              docker stop books-con || true &&
-              docker run -d --name books-con -p 8080:8080 books-api
+              sudo docker build -t books-api . &&
+              sudo docker stop books-con || true &&
+              sudo docker run -d --name books-con -p 8080:8080 books-api
           '
