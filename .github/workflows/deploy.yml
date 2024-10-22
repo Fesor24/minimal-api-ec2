@@ -1,0 +1,29 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Add your EC2 SSH key to GitHub secrets
+
+      - name: SSH into EC2 and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_INSTANCE_PUBLIC_IP }} << 'EOF'
+            cd minimal-api-ec2  # Navigate to your app's directory
+            git pull origin main   # Pull the latest code
+            docker build -t books-api .  # Build the new Docker image
+            docker stop books-con || true  # Stop the old container if running
+            docker run -d --name books-con -p 8080:8080 <image_name>  # Run the new container
+          EOF
