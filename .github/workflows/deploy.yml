@@ -60,6 +60,7 @@ jobs:
             - name: Deploy to EC2
               env:
                 REPOSITORY: books-repo
+                REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 IMAGE_TAG: ${{github.sha}}
                 EC2_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
                 HOSTNAME: ${{secrets.HOST_DNS}}
@@ -73,9 +74,12 @@ jobs:
                 envs: REGISTRY, REPOSITORY, IMAGE_TAG, AWS_REGION, CONTAINER_NAME
                 script: |-
                     echo "in ec2 server"
-                    echo "$AWS_REGION"
-                    echo "$REGISTRY"
-                    aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 533267394084.dkr.ecr.eu-west-2.amazonaws.com
+                    aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $REGISTRY
                     sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
-                    sudo docker rm -f $CONTAINER_NAME || true
+                    if sudo docker ps -a --format '{{.Names}}' | grep -w "$CONTAINER_NAME" > /dev/null; then
+                        echo "Container '$CONTAINER_NAME' exists. Stopping..."
+                        sudo docker stop "$CONTAINER_NAME"
+                        sudo docker rm "$CONTAINER_NAME"
+                    else
+                        echo "Container does not exist. No action taken."
                     sudo docker run -d --name $CONTAINER_NAME -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development $REGISTRY/$REPOSITORY:$IMAGE_TAG
