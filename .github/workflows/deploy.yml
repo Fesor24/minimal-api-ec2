@@ -9,6 +9,7 @@ env:
     AWS_REGION: eu-west-2
     AWS_ACCESS_KEY: ${{secrets.ACCESS_KEY}}
     AWS_SECRET_ACCESS_KEY: ${{secrets.ACCESS_SECRET_KEY}}
+    IMG_REGISTRY: public.ecr.aws/g2r9i5w0
 
 permissions:
     id-token: write
@@ -51,16 +52,14 @@ jobs:
 
             - name: Build, tag and push image to ecr
               env:
-                REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 REPOSITORY: books-repo
                 IMAGE_TAG: ${{github.sha}}
               run: |-
-                docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-                docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+                docker build -t $IMG_REGISTRY/$REPOSITORY:$IMAGE_TAG .
+                docker push $IMG_REGISTRY/$REPOSITORY:$IMAGE_TAG
 
             - name: Deploy to EC2
               env:
-                REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 REPOSITORY: books-repo
                 IMAGE_TAG: ${{github.sha}}
                 EC2_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
@@ -72,8 +71,8 @@ jobs:
                 port: 22
                 key: ${{env.EC2_PRIVATE_KEY}}
                 username: ${{env.USER_NAME}}
-                envs: EC2_PRIVATE_KEY, REGISTRY, REPOSITORY, IMAGE_TAG, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION
+                envs: EC2_PRIVATE_KEY, IMG_REGISTRY, REPOSITORY, IMAGE_TAG, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION
                 script: |-
                     echo "in ec2 server"
-                    sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+                    sudo docker pull $IMG_REGISTRY/$REPOSITORY:$IMAGE_TAG
                     echo "image pull successful"
