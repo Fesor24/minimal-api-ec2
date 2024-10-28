@@ -7,6 +7,8 @@ on:
 env:
     DOTNET_CONFIGURATION: release
     AWS_REGION: eu-west-2
+    AWS_ACCESS_KEY: AKIAXYKJWVYSKKHSDK5I
+    AWS_SECRET_ACCESS_KEY: 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
 
 permissions:
     id-token: write
@@ -52,7 +54,7 @@ jobs:
                 REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 REPOSITORY: books-repo
                 IMAGE_TAG: ${{github.sha}}
-              run: |
+              run: |-
                 docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
                 docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
@@ -70,8 +72,11 @@ jobs:
                 port: 22
                 key: ${{env.EC2_PRIVATE_KEY}}
                 username: ${{env.USER_NAME}}
-                script: |
+                envs: EC2_PRIVATE_KEY, REGISTRY, REPOSITORY, IMAGE_TAG, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION
+                script: |-
                     echo "in ec2 server"
-                    aws ecr get-login-password --region ${{env.AWS_REGION}} | docker login --username AWS --password-stdin ${{env.REGISTRY}}
+                    sudo yum update -y
+                    sudo yum install awscli -y
+                    sudo $(aws ecr get-login --no-include-email --region eu-west-2);
                     sudo docker pull ${{env.REGISTRY}}/${{env.REPOSITORY}}:${{env.IMAGE_TAG}}
                     echo "image pull successful"
