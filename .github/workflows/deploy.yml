@@ -73,7 +73,9 @@ jobs:
                 envs: REGISTRY, REPOSITORY, IMAGE_TAG, AWS_REGION, CONTAINER_NAME
                 script: |-
                     echo "in ec2 server"
-                    aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $REGISTRY
+                    echo "$AWS_REGION"
+                    echo "$REGISTRY"
+                    aws ecr get-login-password --region eu-west-2 | sudo docker login --username AWS --password-stdin 533267394084.dkr.ecr.eu-west-2.amazonaws.com
                     sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
                     sudo docker rm -f $CONTAINER_NAME || true
                     sudo docker run -d --name $CONTAINER_NAME -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development $REGISTRY/$REPOSITORY:$IMAGE_TAG
