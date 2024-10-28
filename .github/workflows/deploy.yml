@@ -31,7 +31,7 @@ jobs:
               run: | 
                 dotnet build -c $DOTNET_CONFIGURATION
                 echo "build successful"
-                echo "running tests..."
+                echo "running tests...."
                 echo "test completed"
     push:
         runs-on: ubuntu-latest
