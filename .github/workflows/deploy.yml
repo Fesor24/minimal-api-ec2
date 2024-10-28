@@ -45,7 +45,7 @@ jobs:
                 role-to-assume: arn:aws:iam::533267394084:role/github-role-stack-Role-RxDfMY7SMkYZ
                 aws-region: ${{env.AWS_REGION}}
 
-            - name: Login to ECR private repo
+            - name: Login to ECR public repo
               id: login-ecr
               uses: aws-actions/amazon-ecr-login@v2
 
@@ -75,8 +75,5 @@ jobs:
                 envs: EC2_PRIVATE_KEY, REGISTRY, REPOSITORY, IMAGE_TAG, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION
                 script: |-
                     echo "in ec2 server"
-                    sudo yum update -y
-                    sudo yum install awscli -y
-                    sudo $(aws ecr get-login --no-include-email --region eu-west-2);
-                    sudo docker pull ${{env.REGISTRY}}/${{env.REPOSITORY}}:${{env.IMAGE_TAG}}
+                    sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
                     echo "image pull successful"
