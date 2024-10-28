@@ -7,8 +7,8 @@ on:
 env:
     DOTNET_CONFIGURATION: release
     AWS_REGION: eu-west-2
-    AWS_ACCESS_KEY: AKIAXYKJWVYSKKHSDK5I
-    AWS_SECRET_ACCESS_KEY: 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
+    AWS_ACCESS_KEY: ${{secrets.ACCESS_KEY}}
+    AWS_SECRET_ACCESS_KEY: ${{secrets.ACCESS_SECRET_KEY}}
 
 permissions:
     id-token: write
