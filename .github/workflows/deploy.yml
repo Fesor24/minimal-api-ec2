@@ -45,7 +45,7 @@ jobs:
                 REGISTRY: ${{steps.login-ecr.outputs.registry}}
                 REPOSITORY: my-ecr-repo
                 IMAGE_TAG: ${{github.sha}}
-              runs: |
+              run: |
                 echo $REGISTRY
                 echo $IMAGE_TAG
     deploy:
