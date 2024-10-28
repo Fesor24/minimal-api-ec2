@@ -66,9 +66,9 @@ jobs:
                 USER_NAME: ${{secrets.USERNAME}}
               uses: appleboy/ssh-action@v1.1.0
               with:
-                host: $HOSTNAME
+                host: ${{env.HOSTNAME}}
                 port: 22
-                key: $EC2_PRIVATE_KEY
-                username: $USER_NAME
+                key: ${{env.EC2_PRIVATE_KEY}}
+                username: ${{env.USER_NAME}}
                 script: |
                     echo "in ec2 server"
