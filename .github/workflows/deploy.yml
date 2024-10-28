@@ -8,6 +8,10 @@ env:
     DOTNET_CONFIGURATION: release
     AWS_REGION: eu-west-2
 
+permissions:
+    id-token: write
+    contents: read
+
 jobs:
     build:
         runs-on: ubuntu-latest
