@@ -72,3 +72,6 @@ jobs:
                 username: ${{env.USER_NAME}}
                 script: |
                     echo "in ec2 server"
+                    aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY
+                    sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+                    echo "image pull successful"
