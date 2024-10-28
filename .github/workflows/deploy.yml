@@ -7,8 +7,7 @@ on:
 env:
     DOTNET_CONFIGURATION: release
     AWS_REGION: eu-west-2
-    AWS_ACCESS_KEY: ${{secrets.ACCESS_KEY}}
-    AWS_SECRET_ACCESS_KEY: ${{secrets.ACCESS_SECRET_KEY}}
+    CONTAINER_NAME: books-cont
 
 permissions:
     id-token: write
@@ -71,6 +70,10 @@ jobs:
                 port: 22
                 key: ${{env.EC2_PRIVATE_KEY}}
                 username: ${{env.USER_NAME}}
-                envs: EC2_PRIVATE_KEY, REGISTRY, REPOSITORY, IMAGE_TAG, AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY, AWS_REGION
+                envs: REGISTRY, REPOSITORY, IMAGE_TAG, AWS_REGION, CONTAINER_NAME
                 script: |-
                     echo "in ec2 server"
+                    aws ecr get-login-password --region $AWS_REGION | sudo docker login --username AWS --password-stdin $REGISTRY
+                    sudo docker pull $REGISTRY/$REPOSITORY:$IMAGE_TAG
+                    sudo docker rm -f $CONTAINER_NAME || true
+                    sudo docker run -d --name $CONTAINER_NAME -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Development $REGISTRY/$REPOSITORY:$IMAGE_TAG
