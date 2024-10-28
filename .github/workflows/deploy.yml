@@ -1,31 +1,18 @@
 name: Deploy to EC2
-
 on:
-  push:
-    branches:
-      - main
-
+    push:
+        branches:
+            - main
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v3
-
-      - name: Deploy to EC2
-        env:
-          PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HOSTNAME: ${{ secrets.HOST_DNS }}
-          USER_NAME: ${{ secrets.USERNAME }}
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
-              set -e
-              cd minimal-api-ec2 &&
-              git pull origin main &&
-              sudo docker build -t books-api . &&
-              sudo docker stop books-con || true &&
-              sudo docker rm books-con || true &&
-              sudo docker run -d --name books-con -p 8080:8080 books-api
-          '
+    build:
+        steps:
+            - name: Build project
+              run: echo "Building project"
+    push:
+        steps:
+            - name: Push project to ecr
+              run: echo "Project being pushed to ecr"
+    deploy:
+        steps:
+            - name: Deploy project to ec2
+              run: echo "Deploy project to ec2 server"
