@@ -29,6 +29,11 @@ List<Author> authors = [
     new Author{Id = 2, Name = "Chinua Achibe"}
     ];
 
+List<Genre> genres = [
+    new Genre{Id = 1, Name = "Romance"},
+    new Genre{Id = 2, Name = "Thriller"}
+    ];
+
 app.MapGet("/api/books", () =>
 {
     return Results.Ok(books);
@@ -40,6 +45,13 @@ app.MapGet("/api/authors", () =>
 {
     return Results.Ok(authors);
 }).WithName("GetAuthors")
+.WithOpenApi();
+
+app.MapGet("/api/genres", () =>
+{
+    return Results.Ok(genres);
+
+}).WithName("GetGenres")
 .WithOpenApi();
 
 app.MapGet("api/book/{id}", (int id) =>
@@ -63,6 +75,12 @@ class Book
 }
 
 public class Author
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+public class Genre
 {
     public int Id { get; set; }
     public string Name { get; set; }

@@ -1,0 +1,4 @@
+Notes
+1. Create ec2 role and attach to ec2 instance -> Permission=
+2. Create role github will use
+3. Create private repo
