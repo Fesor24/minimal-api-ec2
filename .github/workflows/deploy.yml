@@ -66,7 +66,7 @@ jobs:
                 USER_NAME: ${{secrets.USERNAME}}
               run: |
                 echo "$EC2_PRIVATE_KEY" > private_key chmod 600 private_key
-                ssh -o StrictHostKeyChecking=no -i private_key ${USERNAME}@${HOSTNAME}
+                ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME}
                 set -e
                 cd minimal-api
                 aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REGISTRY
